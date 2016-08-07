@@ -1,12 +1,12 @@
 Pod::Spec.new do |s|
   s.name         = 'CDZPinger'
-  s.version      = '1.0.1'
+  s.version      = '1.0.2'
   s.summary      = 'Easy-to-use ICMP Ping for iOS (and maybe OSX).'
-  s.homepage     = 'https://github.com/cdzombak/CDZPinger'
+  s.homepage     = 'https://github.com/Atomz/CDZPinger'
   s.license      = 'MIT'
   s.author       = { 'Chris Dzombak' => 'chris@chrisdzombak.net' }
 
-  s.source       = { :git => 'https://github.com/cdzombak/CDZPinger.git', :tag => 'v1.0.1' }
+  s.source       = { :git => 'https://github.com/Atomz/CDZPinger.git', :tag => 'v1.0.2' }
 
   s.source_files = '*.{h,m}'
   s.public_header_files = 'CDZPinger.h'
