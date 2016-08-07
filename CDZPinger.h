@@ -17,6 +17,8 @@
  */
 @property (nonatomic, assign) NSTimeInterval pingWaitTime;
 
+@property (nonatomic, assign) NSTimeInterval pingTimeout;
+
 /**
  * Designated initializer.
  *
@@ -57,5 +59,7 @@
  * @param error The NSError that was encountered
  */
 - (void)pinger:(CDZPinger *)pinger didEncounterError:(NSError *)error;
+
+- (void)pinger:(CDZPinger *)pinger timeoutError:(NSError *)error;
 
 @end

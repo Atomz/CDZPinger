@@ -11,6 +11,7 @@
 @property (nonatomic, strong) NSDate *pingStartTime;
 @property (nonatomic, strong, readonly) NSMutableArray *lastPingTimes;
 
+
 @end
 
 @implementation CDZPinger
@@ -25,6 +26,7 @@
         self.domainOrIp = domainOrIp;
         self.averageNumberOfPings = 8;
         self.pingWaitTime = 1.0;
+        self.pingTimeout = 2.0;
     }
     return self;
 }
@@ -36,6 +38,9 @@
         self.simplePing = [SimplePing simplePingWithHostName:self.domainOrIp];
         self.simplePing.delegate = self;
         [self.simplePing start];
+
+        //start timer for checking timeout
+        NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:self.pingTimeout target:(id)self selector:@selector(checkTimeout) userInfo:nil repeats:NO];
     }
 }
 
@@ -91,6 +96,19 @@
         [self.lastPingTimes removeObjectAtIndex:0];
     }
     [self.lastPingTimes addObject:@(time)];
+}
+
+#pragma mark CDZpingerDelegate methods
+- (void)checkTimeout
+{
+    if (self.pingingDesired)
+    {
+        [self stopPinging];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            id delegate = self.delegate;
+            [delegate pinger:self timeoutError:nil];
+        });
+    }
 }
 
 #pragma mark SimplePingDelegate methods
