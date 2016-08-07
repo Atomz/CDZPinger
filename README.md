@@ -37,6 +37,24 @@ In your delegate:
 }
 ```
 
+For timeout issue, set timeout value
+```objc
+CDZPinger *pinger = [[CDZPinger alloc] initWithHost:@"google.com"];
+pinger.delegate = self;
+pinger.pingTimeout = 2.0;
+
+```
+
+And implement delegate
+```objc
+#pragma mark CDZPingerDelegate
+
+- (void)pinger:(CDZPinger *)pinger timeoutError:(NSError *)error
+{
+    NSLog(@"%@ timeout", pinger.domainOrIp);
+}
+```
+
 ## Requirements
 
 `CDZPinger` requires iOS 5.x+. It might work on iOS 4, but I haven't tested it.
