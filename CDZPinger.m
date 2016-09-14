@@ -22,7 +22,6 @@
 {
     self = [super init];
     if (self) {
-        self.simplePing.delegate = self;
         self.domainOrIp = domainOrIp;
         self.averageNumberOfPings = 8;
         self.pingWaitTime = 1.0;
@@ -35,7 +34,7 @@
 {
     if (!self.pingingDesired && !self.simplePing) {
         self.pingingDesired = YES;
-        self.simplePing = [SimplePing simplePingWithHostName:self.domainOrIp];
+        self.simplePing = [[SimplePing alloc] initWithHostName:self.domainOrIp];
         self.simplePing.delegate = self;
         [self.simplePing start];
 
@@ -115,27 +114,30 @@
 
 - (void)simplePing:(SimplePing *)pinger didStartWithAddress:(NSData *)address
 {
-    if (self.pingingDesired) [self sendPing];
+    if (self.pingingDesired)
+        [self sendPing];
+    //NSLog("pinging %@", [UtilitySwift displayAddressForAddress:address])
 }
 
-- (void)simplePing:(SimplePing *)pinger didSendPacket:(NSData *)packet
+- (void)simplePing:(SimplePing *)pinger didSendPacket:(NSData *)packet sequenceNumber:(uint16_t)sequenceNumber
 {
     self.pingStartTime = [NSDate date];
 
-    NSLog(@"#%u sent", (unsigned int) OSSwapBigToHostInt16(((const ICMPHeader *) [packet bytes])->sequenceNumber));
+    NSLog(@"#%u sent", (unsigned int) OSSwapBigToHostInt16(sequenceNumber));
 }
 
-- (void)simplePing:(SimplePing *)pinger didReceivePingResponsePacket:(NSData *)packet
+- (void)simplePing:(SimplePing *)pinger didReceivePingResponsePacket:(NSData *)packet sequenceNumber:(uint16_t)sequenceNumber
 {
     NSTimeInterval pingTime = [[NSDate date] timeIntervalSinceDate:self.pingStartTime];
     [self receivedPingWithTime:pingTime];
 
-    NSLog(@"#%u received", (unsigned int) OSSwapBigToHostInt16([SimplePing icmpInPacket:packet]->sequenceNumber) );
+    NSLog(@"#%u received", (unsigned int) OSSwapBigToHostInt16(sequenceNumber));
 }
 
 - (void)simplePing:(SimplePing *)pinger didFailWithError:(NSError *)error
 {
     [self receivedError:error];
+    //NSLog("failed: %@", [UtilitySwift shortErrorFromError:error])
 }
 
 - (void)simplePing:(SimplePing *)pinger didFailToSendPacket:(NSData *)packet error:(NSError *)error
